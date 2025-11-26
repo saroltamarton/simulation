@@ -7,25 +7,20 @@ import matplotlib.pyplot as plt
 import streamlit as st
 
 
-
-
-st.set_page_config(
-    page_title="ESG Investment Portfolio Simulation",
-    page_icon="favicon.png",
-    layout="wide")
-
+st.set_page_config(page_title="ESG Investment Portfolio Simulation",
+                   page_icon="favicon.png",
+                   layout="wide")
 
 st.markdown("""
-    <style>
-        /* Main app and sidebar containers */
+<style>
+/* Main app and sidebar containers */
         html, body,
         [data-testid="stAppViewContainer"],
         [data-testid="stSidebar"],
         [data-testid="stSidebar"] *,
         [data-testid="stSidebarNav"],
         [data-testid="stSidebarNav"] * {
-            font-family: "Times New Roman", serif !important;
-        }
+            font-family: "Times New Roman", serif !important;}
 
         /* Markdown/text blocks */
         [data-testid="stMarkdownContainer"] * {
