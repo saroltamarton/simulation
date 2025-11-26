@@ -64,7 +64,7 @@ def tprint(text):
 
 
 
-green_emitters = [
+highESG = [
     ["Consumer", "BTI", "British American Tobacco", 68],
     ["Consumer", "CL", "Colgate-Palmolive Company", 58],
     ["Consumer", "DEO", "Diageo", 67],
@@ -97,7 +97,7 @@ green_emitters = [
     ["Utilities", "SRE", "Sempra", 57],
 ]
 
-heavy_emitters = [
+lowESG = [
     ["Consumer", "ABNB", "Airbnb", 17],
     ["Consumer", "AMZN", "Amazon", 26],
     ["Consumer", "MAR", "Marriott International", 35],
@@ -131,10 +131,10 @@ heavy_emitters = [
 ]
 
 rows = []
-for r in green_emitters:
-    rows.append(r + ["green"])
-for r in heavy_emitters:
-    rows.append(r + ["heavy"])
+for r in highESG:
+    rows.append(r + ["highESG"])
+for r in lowESGs:
+    rows.append(r + ["lowESG"])
 
 df_esg = (
     pd.DataFrame(rows, columns=["Sector", "Ticker", "Company", "ESG", "Group"])
@@ -319,18 +319,18 @@ def play_page():
         st.session_state.team_choice = None
 
     if team_mode == "Choose team":
-        team_raw = st.selectbox("Choose team", ["green", "heavy"])
+        team_raw = st.selectbox("Choose team", ["highESG", "lowESG"])
     else:
         if st.session_state.team_choice is None:
-            st.session_state.team_choice = random.choice(["green", "heavy"])
+            st.session_state.team_choice = random.choice(["highESG", "lowESG"])
         team_raw = st.session_state.team_choice
 
-    if team_raw == "green":
-        team_label = "team green"
-        team_all = df_esg[df_esg["Group"] == "green"]["Ticker"].tolist()
+    if team_raw == "highESG":
+        team_label = "high ESG team"
+        team_all = df_esg[df_esg["Group"] == "highESG"]["Ticker"].tolist()
     else:
-        team_label = "team heavy emitters"
-        team_all = df_esg[df_esg["Group"] == "heavy"]["Ticker"].tolist()
+        team_label = "low ESG team"
+        team_all = df_esg[df_esg["Group"] == "lowESG"]["Ticker"].tolist()
 
     tprint(f"You are in {team_label}")
 
