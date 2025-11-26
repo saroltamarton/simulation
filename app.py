@@ -589,7 +589,7 @@ def scoreboard_page():
                 "Combined Score",
             ]
         )
-        empty.to_csv(SCOREBOARD_PATH, index=False)
+        empty.to_csv(SCOREBOARD, index=False)
         st.success("Scoreboard cleared.")
 
 
