@@ -327,10 +327,15 @@ def play_page():
     active_tickers = st.session_state.active_tickers
 
     with st.expander("Show tickers with price data"):
-        df_view = df_esg[df_esg["Ticker"].isin(active_tickers)][["Ticker","Company","Sector","ESG"]]
-        last = prices[active_tickers].iloc[-1].rename("Last Price")
-        df_view = df_view.merge(last.to_frame(), on="Ticker")
-        st.dataframe(df_view)
+    df_view = df_esg[df_esg["Ticker"].isin(active_tickers)][["Ticker","Company","Sector","ESG"]].copy()
+    last = prices[active_tickers].iloc[-1].rename("Last Price")
+
+    # convert the index (tickers) into a proper column so we can merge on "Ticker"
+    last_df = last.to_frame().reset_index().rename(columns={"index": "Ticker"})
+
+    df_view = df_view.merge(last_df, on="Ticker")
+    st.dataframe(df_view)
+
 
     st.markdown("---")
     st.write("Step 2: Choose initial investments")
