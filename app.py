@@ -587,26 +587,13 @@ def play_page():
 
 def scoreboard_page():
     st.header("Scoreboard")
-st.write("DEBUG: ESG app version 3")
+
+    st.write("DEBUG: inside scoreboard_page()")
+    st.write(f"DEBUG: current working directory: {os.getcwd()}")
+    st.write(f"DEBUG: SCOREBOARD_PATH = {SCOREBOARD_PATH}")
 
     sb = load_scoreboard()
-
-    if not sb.empty:
-        # Make sure it's string
-        sb["Team"] = sb["Team"].astype(str).str.strip()
-
-        # Any row mentioning Green → highESG team
-        sb.loc[sb["Team"].str.contains("Green", case=False, na=False), "Team"] = "highESG team"
-
-        # Any row mentioning Heavy → lowESG team
-        sb.loc[sb["Team"].str.contains("Heavy", case=False, na=False), "Team"] = "lowESG team"
-
-        # Save cleaned version back to file
-        sb.to_csv(SCOREBOARD_PATH, index=False)
-
-        st.dataframe(sb)
-    else:
-        st.write("No entries yet.")
+    st.dataframe(sb)
 
     if st.button("Clear scoreboard"):
         empty = pd.DataFrame(
