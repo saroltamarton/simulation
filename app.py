@@ -135,7 +135,7 @@ lowESG = [
 rows = []
 for r in highESG:
     rows.append(r + ["highESG"])
-for r in lowESGs:
+for r in lowESG:
     rows.append(r + ["lowESG"])
 
 df_esg = (
