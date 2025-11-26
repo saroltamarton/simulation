@@ -48,7 +48,7 @@ st.sidebar.markdown("---")
 
 TOTAL_LIMIT = 100000
 years = 5
-SCOREBOARD_PATH = "esg_simulation_scoreboard.csv"
+SCOREBOARD_PATH = "ESG_simulation_scoreboard.csv"
 
 plt.rcParams["font.family"] = ["Times New Roman", "Serif"]
 plt.rcParams["font.size"] = 12
@@ -589,7 +589,7 @@ def scoreboard_page():
                 "Combined Score",
             ]
         )
-        empty.to_csv(SCOREBOARD, index=False)
+        empty.to_csv(SCOREBOARD_PATH, index=False)
         st.success("Scoreboard cleared.")
 
 
