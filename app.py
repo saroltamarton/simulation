@@ -306,7 +306,6 @@ def load_scoreboard():
 
 
 def main():
-    st.write("DEBUG: inside main() of THIS file")
     st.title("ESG Investment Portfolio Simulation")
 
     page = st.sidebar.radio("Navigation", ["Play Simulation", "Scoreboard"])
