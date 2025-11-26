@@ -19,36 +19,29 @@ st.set_page_config(
 # GLOBAL FONT: Times New Roman
 st.markdown("""
     <style>
-        html, body, [class*="css"]  {
-            font-family: 'Times New Roman', serif !important;
+        html, body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"] {
+            font-family: "Times New Roman", serif !important;
         }
 
-        /* Sidebar text */
-        .css-1d391kg, .css-qri22k, .css-1fcdlhc {
-            font-family: 'Times New Roman', serif !important;
+        /* markdown and text blocks */
+        .stMarkdown, .stText, .stCaption, .stSubheader, .stHeader, .stTitle {
+            font-family: "Times New Roman", serif !important;
         }
 
-        /* Headers */
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'Times New Roman', serif !important;
+        /* widget labels */
+        label, .stCheckbox, .stRadio, .stSelectbox, .stTextInput, .stNumberInput {
+            font-family: "Times New Roman", serif !important;
         }
 
-        /* Streamlit text elements */
-        .stTextInput label, .stSelectbox label, .stNumberInput label,
-        .stRadio label, .stCheckbox label {
-            font-family: 'Times New Roman', serif !important;
+        /* buttons */
+        .stButton > button {
+            font-family: "Times New Roman", serif !important;
         }
 
-        /* Buttons */
-        .stButton>button {
-            font-family: 'Times New Roman', serif !important;
+        /* tables and dataframes */
+        .stTable, .stDataFrame {
+            font-family: "Times New Roman", serif !important;
         }
-
-        /* Dataframe and table text */
-        .stDataFrame, .stTable {
-            font-family: 'Times New Roman', serif !important;
-        }
-
     </style>
 """, unsafe_allow_html=True)
 
