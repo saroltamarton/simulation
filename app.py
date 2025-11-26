@@ -277,7 +277,6 @@ def update_scoreboard(name, team, final_val, ret, avg_esg):
 def load_scoreboard():
     if os.path.exists(SCOREBOARD_PATH):
         sb = pd.read_csv(SCOREBOARD_PATH)
-        # Clean any old labels
         sb["Team"] = sb["Team"].replace(
             {"Team Green": "highESG team", "Team Heavy": "lowESG team"}
         )
@@ -416,8 +415,7 @@ def play_page():
     st.markdown("---")
     st.write("Step 3: Optional buy/sell events")
 
-    sim_cash = initial_cash
-    st.write(f"Initial free cash available for events: £{sim_cash:,.2f}")
+    st.write(f"Initial free cash available for events: £{initial_cash:,.2f}")
 
     num_events = st.selectbox("Number of events", [0, 1, 2, 3])
     events = []
@@ -425,7 +423,6 @@ def play_page():
 
     for i in range(num_events):
         st.subheader(f"Event {i+1}")
-        st.write(f"Cash before this event: £{sim_cash:,.2f}")
 
         date_str = st.text_input(
             f"Event {i+1} date (YYYY-MM-DD)", key=f"dt_{i}"
@@ -452,25 +449,11 @@ def play_page():
 
         if action == "Buy":
             cash_ev = amount       # spend cash
-        else:  # Sell
+        else:
             cash_ev = -amount      # receive cash
 
         if cash_ev < 0 and ticker_ev not in sellable:
             st.error(f"You cannot sell {ticker_ev} (not in initial investments).")
-            return
-
-        if cash_ev > 0 and sim_cash <= 0:
-            st.error(
-                "You do not have any cash available for buys at this point. "
-                "You need to sell first before you can buy."
-            )
-            return
-
-        if cash_ev > 0 and cash_ev > sim_cash:
-            st.error(
-                f"You only have £{sim_cash:,.2f} available at this point, "
-                "so you cannot invest more than that in a single event."
-            )
             return
 
         try:
@@ -480,11 +463,6 @@ def play_page():
         except Exception:
             st.error("Invalid date")
             return
-
-        if cash_ev > 0:
-            sim_cash -= cash_ev
-        else:
-            sim_cash += -cash_ev
 
         events.append(
             {"idx": idx, "date": dt_final, "cash": cash_ev, "ticker": ticker_ev}
