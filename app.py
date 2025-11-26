@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import streamlit as st
 
 # ============================================================
-# PAGE CONFIG + LOGO
+# PAGE CONFIG + GLOBAL FONT + SIDEBAR BANNER
 # ============================================================
 
 st.set_page_config(
@@ -16,35 +16,38 @@ st.set_page_config(
     layout="wide"
 )
 
-# GLOBAL FONT: Times New Roman
+# GLOBAL FONT: Times New Roman everywhere (main + sidebar)
 st.markdown("""
     <style>
-        html, body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"] {
+        /* Main app and sidebar containers */
+        html, body,
+        [data-testid="stAppViewContainer"],
+        [data-testid="stSidebar"],
+        [data-testid="stSidebar"] *,
+        [data-testid="stSidebarNav"],
+        [data-testid="stSidebarNav"] * {
             font-family: "Times New Roman", serif !important;
         }
 
-        /* markdown and text blocks */
-        .stMarkdown, .stText, .stCaption, .stSubheader, .stHeader, .stTitle {
+        /* Markdown/text blocks */
+        [data-testid="stMarkdownContainer"] * {
             font-family: "Times New Roman", serif !important;
         }
 
-        /* widget labels */
-        label, .stCheckbox, .stRadio, .stSelectbox, .stTextInput, .stNumberInput {
+        /* Inputs and buttons */
+        button, input, textarea, select,
+        .stButton > button,
+        .stTextInput input,
+        .stNumberInput input {
             font-family: "Times New Roman", serif !important;
         }
 
-        /* buttons */
-        .stButton > button {
-            font-family: "Times New Roman", serif !important;
-        }
-
-        /* tables and dataframes */
+        /* Tables and dataframes */
         .stTable, .stDataFrame {
             font-family: "Times New Roman", serif !important;
         }
     </style>
 """, unsafe_allow_html=True)
-
 
 st.sidebar.image("sidebar_banner.png", use_column_width=True)
 st.sidebar.markdown("---")
@@ -57,14 +60,14 @@ TOTAL_LIMIT = 100000
 years = 5
 SCOREBOARD_PATH = "esg_simulation_scoreboard.csv"
 
-plt.rcParams["font.family"] = ["Nimbus Roman", "Serif"]
+plt.rcParams["font.family"] = ["Times New Roman", "Serif"]
 plt.rcParams["font.size"] = 12
 plt.close("all")
 
 
 def tprint(text):
     st.markdown(
-        f"<p style='font-family: Nimbus Roman; font-size:16px; text-align:center;'>{text}</p>",
+        f"<p style='font-family: \"Times New Roman\", serif; font-size:16px; text-align:center;'>{text}</p>",
         unsafe_allow_html=True,
     )
 
@@ -325,7 +328,6 @@ def main():
 
 
 def play_page():
-    
     student_name = st.text_input("Enter your name")
 
     # team selection
