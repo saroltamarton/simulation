@@ -6,7 +6,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import streamlit as st
 
-st.write("DEBUG: ESG app version 3") 
 
 
 st.set_page_config(page_title="ESG Investment Portfolio Simulation",
@@ -588,8 +587,6 @@ def play_page():
 def scoreboard_page():
     st.header("Scoreboard")
 
-    st.write("DEBUG: inside scoreboard_page()")
-    st.write(f"DEBUG: current working directory: {os.getcwd()}")
     st.write(f"DEBUG: SCOREBOARD_PATH = {SCOREBOARD_PATH}")
 
     sb = load_scoreboard()
