@@ -326,7 +326,7 @@ def play_page():
     prices = st.session_state.prices
     active_tickers = st.session_state.active_tickers
 
-    with st.expander("Show tickers with price data"):
+with st.expander("Show tickers with price data"):
     df_view = df_esg[df_esg["Ticker"].isin(active_tickers)][["Ticker","Company","Sector","ESG"]].copy()
     last = prices[active_tickers].iloc[-1].rename("Last Price")
 
