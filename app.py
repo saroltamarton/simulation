@@ -102,9 +102,10 @@ for r in green_emitters:
 for r in heavy_emitters:
     rows.append(r + ["heavy"])
 
-df_esg = pd.DataFrame(rows, columns=["Sector", "Ticker", "Company", "ESG", "Group"]).sort_values(
-    ["Group", "Sector", "Ticker"]
-)
+df_esg = pd.DataFrame(
+    rows,
+    columns=["Sector", "Ticker", "Company", "ESG", "Group"],
+).sort_values(["Group", "Sector", "Ticker"])
 
 
 # ============================================================
@@ -113,7 +114,13 @@ df_esg = pd.DataFrame(rows, columns=["Sector", "Ticker", "Company", "ESG", "Grou
 
 def fetch_price_series(ticker):
     try:
-        df = yf.download(ticker, period=f"{years}y", interval="1d", auto_adjust=False, progress=False)
+        df = yf.download(
+            ticker,
+            period=f"{years}y",
+            interval="1d",
+            auto_adjust=False,
+            progress=False,
+        )
         if df.empty:
             return None
         s = df["Adj Close"] if "Adj Close" in df else df["Close"]
@@ -121,7 +128,7 @@ def fetch_price_series(ticker):
         if len(s) < 50:
             return None
         return s
-    except:
+    except Exception:
         return None
 
 
@@ -183,12 +190,14 @@ def portfolio_with_events(df, ticks, sh_start, events, cash0):
         values.append((sh * row).sum() + cash)
 
     last_prices = p.iloc[-1].values
-    holdings = pd.DataFrame({
-        "Ticker": ticks,
-        "Shares": sh,
-        "Last Price": last_prices,
-        "Current Value": sh * last_prices
-    })
+    holdings = pd.DataFrame(
+        {
+            "Ticker": ticks,
+            "Shares": sh,
+            "Last Price": last_prices,
+            "Current Value": sh * last_prices,
+        }
+    )
 
     return pd.Series(values, index=p.index), holdings, cash
 
@@ -201,9 +210,18 @@ def update_scoreboard(name, team, final_val, ret, avg_esg):
     if os.path.exists(SCOREBOARD_PATH):
         sb = pd.read_csv(SCOREBOARD_PATH)
     else:
-        sb = pd.DataFrame(columns=["Student", "Team", "Final portfolio (£)", "Total return (%)", "Average ESG", "Combined Score"])
+        sb = pd.DataFrame(
+            columns=[
+                "Student",
+                "Team",
+                "Final portfolio (£)",
+                "Total return (%)",
+                "Average ESG",
+                "Combined Score",
+            ]
+        )
 
-    combined = round(avg_esg * (1 + ret/100), 4)
+    combined = round(avg_esg * (1 + ret / 100), 4)
 
     new_row = {
         "Student": name,
@@ -223,7 +241,16 @@ def update_scoreboard(name, team, final_val, ret, avg_esg):
 def load_scoreboard():
     if os.path.exists(SCOREBOARD_PATH):
         return pd.read_csv(SCOREBOARD_PATH)
-    return pd.DataFrame(columns=["Student", "Team", "Final portfolio (£)", "Total return (%)", "Average ESG", "Combined Score"])
+    return pd.DataFrame(
+        columns=[
+            "Student",
+            "Team",
+            "Final portfolio (£)",
+            "Total return (%)",
+            "Average ESG",
+            "Combined Score",
+        ]
+    )
 
 
 # ============================================================
@@ -245,7 +272,7 @@ def main():
 def play_page():
     tprint("Welcome to the ESG Portfolio Simulation")
 
-    student_name = st.text_input("Enter your name")
+    student_name = st.text_input("Enter your name or team name")
 
     # ---- TEAM SELECTION ----
     team_mode = st.radio("Team assignment", ["Random", "Choose team"])
@@ -289,11 +316,11 @@ def play_page():
 
     # Display table with price data
     with st.expander("Show tickers with price data"):
-        df_view = df_esg[df_esg["Ticker"].isin(active_tickers)][["Ticker", "Company", "Sector", "ESG"]].copy()
-
+        df_view = df_esg[df_esg["Ticker"].isin(active_tickers)][
+            ["Ticker", "Company", "Sector", "ESG"]
+        ].copy()
         last = prices[active_tickers].iloc[-1].rename("Last Price")
         last_df = last.to_frame().reset_index().rename(columns={"index": "Ticker"})
-
         df_full = df_view.merge(last_df, on="Ticker")
         st.dataframe(df_full)
 
@@ -301,16 +328,22 @@ def play_page():
     st.markdown("---")
     st.write("Step 2: Choose initial investments")
 
-    invest_tickers = st.multiselect("Select tickers", active_tickers, default=active_tickers)
+    invest_tickers = st.multiselect(
+        "Select tickers", active_tickers, default=active_tickers
+    )
 
     allocation_mode = st.radio("Initial allocation", ["Equal split", "Custom"])
 
     initial_amounts = {}
+
     if allocation_mode == "Equal split":
         eq = TOTAL_LIMIT / len(invest_tickers)
         for t in invest_tickers:
             initial_amounts[t] = eq
         total_invest = TOTAL_LIMIT
+
+        st.write(f"Total initial investment: £{total_invest:,.2f}")
+        st.write(f"Remaining cash: £{TOTAL_LIMIT - total_invest:,.2f}")
 
     else:
         total_invest = 0.0
@@ -320,10 +353,13 @@ def play_page():
                 min_value=0.0,
                 max_value=float(TOTAL_LIMIT),
                 step=100.0,
-                key=f"init_{t}"
+                key=f"init_{t}",
             )
             initial_amounts[t] = float(amt)
             total_invest += float(amt)
+
+        st.write(f"Total initial investment: £{total_invest:,.2f}")
+        st.write(f"Remaining cash: £{TOTAL_LIMIT - total_invest:,.2f}")
 
         if total_invest > TOTAL_LIMIT:
             st.error("Total exceeds £100,000")
@@ -344,6 +380,8 @@ def play_page():
     st.markdown("---")
     st.write("Step 3: Optional buy/sell events")
 
+    st.write(f"Initial free cash available for events: £{initial_cash:,.2f}")
+
     num_events = st.selectbox("Number of events", [0, 1, 2, 3])
     events = []
     dates = prices.index
@@ -351,24 +389,43 @@ def play_page():
     for i in range(num_events):
         st.subheader(f"Event {i+1}")
 
-        date_str = st.text_input(f"Event {i+1} date (YYYY-MM-DD)", key=f"dt_{i}")
-        ticker_ev = st.selectbox(f"Ticker for event {i+1}", active_tickers, key=f"tk_{i}")
-        cash_ev = st.number_input(f"Cash (+buy, -sell) for {ticker_ev}", step=100.0, key=f"cs_{i}")
+        date_str = st.text_input(
+            f"Event {i+1} date (YYYY-MM-DD)", key=f"dt_{i}"
+        )
+        ticker_ev = st.selectbox(
+            f"Ticker for event {i+1}", active_tickers, key=f"tk_{i}"
+        )
+        cash_ev = st.number_input(
+            f"Cash (+buy, -sell) for {ticker_ev}",
+            step=100.0,
+            key=f"cs_{i}",
+        )
 
         if cash_ev != 0:
+            # prevent buying if no initial cash
+            if cash_ev > 0 and initial_cash <= 0:
+                st.error(
+                    "You have no starting cash available for buys. You need to sell first before you can buy."
+                )
+                return
+
             try:
                 dt = pd.to_datetime(date_str)
                 idx = (abs(dates - dt)).argmin()
                 dt_final = dates[idx]
-            except:
+            except Exception:
                 st.error("Invalid date")
                 return
 
             if cash_ev < 0 and ticker_ev not in sellable:
-                st.error(f"You cannot sell {ticker_ev} (not in initial investments).")
+                st.error(
+                    f"You cannot sell {ticker_ev} (not in initial investments)."
+                )
                 return
 
-            events.append({"idx": idx, "date": dt_final, "cash": cash_ev, "ticker": ticker_ev})
+            events.append(
+                {"idx": idx, "date": dt_final, "cash": cash_ev, "ticker": ticker_ev}
+            )
 
     # ---- RUN SIMULATION ----
     st.markdown("---")
@@ -378,18 +435,29 @@ def play_page():
             st.error("Enter your name.")
             return
 
-        base_port = portfolio_no_events(prices, active_tickers, shares_0, initial_cash)
-        port_series, holdings, final_cash = portfolio_with_events(prices, active_tickers, shares_0, events, initial_cash)
+        base_port = portfolio_no_events(
+            prices, active_tickers, shares_0, initial_cash
+        )
+        port_series, holdings, final_cash = portfolio_with_events(
+            prices, active_tickers, shares_0, events, initial_cash
+        )
 
         # Plot
         fig, ax = plt.subplots(figsize=(10, 5))
         ax.plot(base_port.index, base_port.values, label="Initial")
-        ax.plot(port_series.index, port_series.values, label="With events", linestyle="--")
+        ax.plot(
+            port_series.index,
+            port_series.values,
+            label="With events",
+            linestyle="--",
+        )
         ax.grid(True)
         ax.legend()
         st.pyplot(fig)
 
-        hold_df = holdings.merge(df_esg, on="Ticker").sort_values(["Sector", "Ticker"])
+        hold_df = holdings.merge(df_esg, on="Ticker").sort_values(
+            ["Sector", "Ticker"]
+        )
         st.dataframe(hold_df)
 
         final_val = port_series.iloc[-1]
@@ -405,6 +473,20 @@ def play_page():
 def scoreboard_page():
     st.header("Scoreboard")
     st.dataframe(load_scoreboard())
+
+    if st.button("Clear scoreboard"):
+        empty = pd.DataFrame(
+            columns=[
+                "Student",
+                "Team",
+                "Final portfolio (£)",
+                "Total return (%)",
+                "Average ESG",
+                "Combined Score",
+            ]
+        )
+        empty.to_csv(SCOREBOARD_PATH, index=False)
+        st.success("Scoreboard cleared.")
 
 
 if __name__ == "__main__":
