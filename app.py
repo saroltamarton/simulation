@@ -281,7 +281,15 @@ def update_scoreboard(name, team, final_val, ret, avg_esg):
 
 def load_scoreboard():
     if os.path.exists(SCOREBOARD_PATH):
-        return pd.read_csv(SCOREBOARD_PATH)
+        sb = pd.read_csv(SCOREBOARD_PATH)
+
+        # Fix any old labels on the fly
+        sb["Team"] = sb["Team"].replace({
+            "Team Green": "highESG team",
+            "Team Heavy": "lowESG team"
+        })
+        return sb
+
     return pd.DataFrame(
         columns=[
             "Student",
