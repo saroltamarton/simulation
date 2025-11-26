@@ -326,10 +326,10 @@ def play_page():
         team_raw = st.session_state.team_choice
 
     if team_raw == "highESG":
-        team_label = "high ESG team"
+        team_label = "highESG team"
         team_all = df_esg[df_esg["Group"] == "highESG"]["Ticker"].tolist()
     else:
-        team_label = "low ESG team"
+        team_label = "lowESG team"
         team_all = df_esg[df_esg["Group"] == "lowESG"]["Ticker"].tolist()
 
     tprint(f"You are in {team_label}")
