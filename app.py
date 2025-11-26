@@ -328,6 +328,9 @@ def main():
 
 
 def play_page():
+    st.image("banner.png", use_column_width=True)
+    st.markdown("---")
+
     student_name = st.text_input("Enter your name")
 
     # team selection
