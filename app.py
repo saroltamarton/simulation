@@ -11,9 +11,7 @@ st.set_page_config(page_title="ESG Investment Portfolio Simulation",
                    page_icon="favicon.png",
                    layout="wide")
 
-st.markdown("""
-<style>
-/* Main app and sidebar containers */
+st.markdown("""<style>/* Main app and sidebar containers */
         html, body,
         [data-testid="stAppViewContainer"],
         [data-testid="stSidebar"],
