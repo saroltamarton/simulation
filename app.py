@@ -102,10 +102,11 @@ for r in green_emitters:
 for r in heavy_emitters:
     rows.append(r + ["heavy"])
 
-df_esg = pd.DataFrame(
-    rows,
-    columns=["Sector", "Ticker", "Company", "ESG", "Group"],
-).sort_values(["Group", "Sector", "Ticker"])
+df_esg = (
+    pd.DataFrame(rows, columns=["Sector", "Ticker", "Company", "ESG", "Group"])
+    .sort_values(["Group", "Sector", "Ticker"])
+    .reset_index(drop=True)
+)
 
 
 # ============================================================
@@ -376,11 +377,12 @@ def play_page():
 
     sellable = [t for t in invest_tickers if initial_amounts.get(t, 0) > 0]
 
-    # ---- EVENTS ----
+    # ---- EVENTS WITH RUNNING CASH ----
     st.markdown("---")
     st.write("Step 3: Optional buy/sell events")
 
-    st.write(f"Initial free cash available for events: £{initial_cash:,.2f}")
+    sim_cash = initial_cash
+    st.write(f"Initial free cash available for events: £{sim_cash:,.2f}")
 
     num_events = st.selectbox("Number of events", [0, 1, 2, 3])
     events = []
@@ -388,6 +390,7 @@ def play_page():
 
     for i in range(num_events):
         st.subheader(f"Event {i+1}")
+        st.write(f"Cash before this event: £{sim_cash:,.2f}")
 
         date_str = st.text_input(
             f"Event {i+1} date (YYYY-MM-DD)", key=f"dt_{i}"
@@ -402,13 +405,27 @@ def play_page():
         )
 
         if cash_ev != 0:
-            # prevent buying if no initial cash
-            if cash_ev > 0 and initial_cash <= 0:
+            # selling constraint
+            if cash_ev < 0 and ticker_ev not in sellable:
+                st.error(f"You cannot sell {ticker_ev} (not in initial investments).")
+                return
+
+            # buying constraints based on running cash
+            if cash_ev > 0 and sim_cash <= 0:
                 st.error(
-                    "You have no starting cash available for buys. You need to sell first before you can buy."
+                    "You do not have any cash available for buys at this point. "
+                    "You need to sell first before you can buy."
                 )
                 return
 
+            if cash_ev > 0 and cash_ev > sim_cash:
+                st.error(
+                    f"You only have £{sim_cash:,.2f} available at this point, "
+                    "so you cannot invest more than that in a single event."
+                )
+                return
+
+            # closest trading date
             try:
                 dt = pd.to_datetime(date_str)
                 idx = (abs(dates - dt)).argmin()
@@ -417,11 +434,11 @@ def play_page():
                 st.error("Invalid date")
                 return
 
-            if cash_ev < 0 and ticker_ev not in sellable:
-                st.error(
-                    f"You cannot sell {ticker_ev} (not in initial investments)."
-                )
-                return
+            # update simulated cash for later events
+            if cash_ev > 0:
+                sim_cash -= cash_ev
+            else:
+                sim_cash += -cash_ev
 
             events.append(
                 {"idx": idx, "date": dt_final, "cash": cash_ev, "ticker": ticker_ev}
