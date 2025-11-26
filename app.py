@@ -586,6 +586,7 @@ def play_page():
 
 def scoreboard_page():
     st.header("Scoreboard")
+st.write("DEBUG: ESG app version 3")
 
     sb = load_scoreboard()
 
