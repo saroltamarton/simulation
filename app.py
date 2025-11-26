@@ -294,13 +294,12 @@ def main():
 
 
 def play_page():
-    tprint("Welcome to the ESG Portfolio Simulation")
 
     # Banner
     st.image("banner.png", use_column_width=True)
     st.markdown("---")
     
-    student_name = st.text_input("Enter your name or team name")
+    student_name = st.text_input("Enter your name")
 
     # team selection
     team_mode = st.radio("Team assignment", ["Random", "Choose team"])
