@@ -11,7 +11,7 @@ import streamlit as st
 # ============================================================
 
 st.set_page_config(
-    page_title="ESG Simulation",
+    page_title="ESG Investment Portfolio Simulation",
     page_icon="favicon.png",
     layout="wide"
 )
@@ -314,7 +314,7 @@ def load_scoreboard():
 # ============================================================
 
 def main():
-    st.title("ESG Portfolio Simulation")
+    st.title("ESG Investmeent Portfolio Simulation")
 
     page = st.sidebar.radio("Navigation", ["Play Simulation", "Scoreboard"])
 
