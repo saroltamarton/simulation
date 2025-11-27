@@ -546,7 +546,7 @@ def play_page():
         ax.legend()
         st.pyplot(fig)
 
-        st.subheader("Holdings at the end")
+        st.subheader("Holdings")
         st.dataframe(hold_df)
 
         transactions = []
@@ -585,7 +585,7 @@ def play_page():
 
         if transactions:
             event_log = pd.DataFrame(transactions).sort_values(["Date", "Ticker"])
-            st.subheader("Transaction log")
+            st.subheader("Transaction Log")
             st.dataframe(event_log)
 
         # All tickers actually involved (initial + events)
@@ -613,7 +613,7 @@ def play_page():
             )
 
         if per_stock:
-            st.subheader("Per-stock price returns and ESG Scores")
+            st.subheader("Per-stock Price Returns and ESG Scores")
             st.dataframe(pd.DataFrame(per_stock))
 
        
