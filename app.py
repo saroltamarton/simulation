@@ -613,10 +613,10 @@ def play_page():
             )
 
         if per_stock:
-            st.subheader("Per-stock price returns (for invested tickers)")
+            st.subheader("Per-stock price returns and ESG Scores")
             st.dataframe(pd.DataFrame(per_stock))
 
-        # Average ESG over all tickers used
+       
         avg_esg = df_esg[df_esg["Ticker"].isin(tickers_involved)]["ESG"].mean()
         sb = update_scoreboard(student_name, team_label, final_val, ret, avg_esg)
 
